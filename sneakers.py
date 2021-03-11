@@ -2,6 +2,7 @@ import error as log
 import htmlmin, subprocess, re, sys, os, requests
 from bs4 import BeautifulSoup
 
+
 sys.setrecursionlimit(1000)
 def hasNumbers(inputString):
 	return any(char.isdigit() for char in inputString)
@@ -27,10 +28,11 @@ class sneaker:
 			self.limited = infos["limited"]
 			self.title = infos["title"]
 			self.instock = infos["instock"]
-			self.exist = infos["exist"]
+			self.obj = infos
 		else:
 			self.instock = False
-			self.exist = infos["exist"]
+		self.exist = infos["exist"]
+		self.obj = infos
 
 
 
@@ -134,11 +136,7 @@ class footlocker:
 		color = element.text.strip("Color: ").strip("Color:").strip("Color")
 			
 		if len(color) > 20 or color == None or color == "None":
-			print("\n\n\n\n")
-			print("Original :",color)
-			color = nextword('Color:', element.text)
-			print("new:",color)
-			print("\n\n\n\n")
+			color = nextword('Color:', content.find_all("div", {"class":"ProductDetails-description"}).text)
 		return color
 
 	def limited(content):
@@ -149,9 +147,6 @@ class footlocker:
 
 
 	def scrape(baseurl):
-
-	
-
 		#headers = {'user-agent': 'curl/7.70.0',"Host": "m.jdsports.ie","accept": "*/*","Accept-Encoding": "gzip, deflate, br",}
 		#source = requests.get(url, headers=headers).content.decode()
 
@@ -181,7 +176,7 @@ class footlocker:
 			else:
 				exc_type, exc_obj, exc_tb = sys.exc_info()
 				fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-				print(f"\n\n{exc_type, fname, exc_tb.tb_lineno}\n\n")
+				log.set.log(f"\n\n{exc_type, fname, exc_tb.tb_lineno}\n\n")
 				print("Bug occured. Writting page source to `tmp.source`.")
 				with open("tmp.source","w") as f:
 					f.write(sourcepageraw)
@@ -230,8 +225,14 @@ def get(url):
 	elif "footlocker." in url:
 		source = "footlocker"
 
+	try:
+		result = sneaker(source, url)
+		return result
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		log.set.log(f"{exc_type, fname, exc_tb.tb_lineno}\n\n")
+		return "error"
 
-	result = sneaker(source, url)
-
-	return result
+	
 

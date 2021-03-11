@@ -1,5 +1,7 @@
-import colorama
+import colorama, os
 from time import sleep as delay
+
+pref = os.environ.get('logging')
 
 class bcolors:
     HEADER = '\033[95m'
@@ -17,6 +19,11 @@ class set:
 	def error(msg,code):
 		print(bcolors.FAIL+msg+bcolors.ENDC)
 		delay(1)
-		exit(code)
+		raise RuntimeError(msg)
 	def warning(msg):
-		print(bcolors.WARNING+msg+bcolors.ENDC)
+		if os.environ.get('logging') == "on":
+			print(bcolors.WARNING+msg+bcolors.ENDC)
+
+	def log(msg):
+		if os.environ.get('logging') == "on":
+			print(msg)

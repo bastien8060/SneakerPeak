@@ -1,2 +1,2 @@
 # SneakerPeak
-Scrapes Sneaker selling websites
+Scrapes Sneaker selling websites.

@@ -2,7 +2,6 @@ import error as log
 import htmlmin, subprocess, re, sys, os, requests
 from bs4 import BeautifulSoup
 
-
 sys.setrecursionlimit(1000)
 def hasNumbers(inputString):
 	return any(char.isdigit() for char in inputString)
@@ -114,7 +113,7 @@ class footlocker:
 
 	def title(content):
 		for i in content.find_all("nav", {"class": "c-breadcrumbs"}):
-			return i.text.strip("Home>")
+			return i.text.strip("Home>").strip("Home >")
 
 	def instock(content):
 		if jdsports.sizes(content) == []:
@@ -176,7 +175,7 @@ class footlocker:
 			else:
 				exc_type, exc_obj, exc_tb = sys.exc_info()
 				fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-				log.set.log(f"\n\n{exc_type, fname, exc_tb.tb_lineno}\n\n")
+				print(f"\n\n{exc_type, fname, exc_tb.tb_lineno}\n\n")
 				print("Bug occured. Writting page source to `tmp.source`.")
 				with open("tmp.source","w") as f:
 					f.write(sourcepageraw)
@@ -203,10 +202,8 @@ def scrapesneaker(source,url):
 		data = jdsports.scrape(url)
 	elif source == "footlocker":
 		data = footlocker.scrape(url)
-	else:
-		log.set.error(f"`{source}` is not yet implemented!",0)
 
-	if data == {}:
+	if (data == {}):
 		log.set.error(f"`{source}` returned no data",0)
 	return data
 
